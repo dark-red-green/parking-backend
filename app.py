@@ -76,10 +76,10 @@ def get_image(camera, time):
     img = Image.open(
         f'CNR-EXT_FULL_IMAGE_1000x750/FULL_IMAGE_1000x750/SUNNY/{date_}/camera{camera}/{date_}_{time}.jpg')
     scale_percent = 259  # percent of original size
-    width = int(img.size[1] * scale_percent / 100)
-    height = int(img.size[0] * scale_percent / 100)
+    width = int(img.size[0] * scale_percent / 100)
+    height = int(img.size[1] * scale_percent / 100)
     dim = (width, height)
-    img.resize(dim)
+    img = img.resize(dim)
     return img
 
 def draw_bounding_boxes(img, camera, time):
@@ -95,9 +95,10 @@ def draw_bounding_boxes(img, camera, time):
         if camera == camera_ and datetime == datetime_:
             x, y, w, h = slot_to_loc[camera][slot_id]
             if occupancy == "0":
-                img_draw.rectangle([(x, y), (w, h)], outline="green")
+                img_draw.rectangle([(x, y), (x+w, y+h)], outline=(0,255,0), width=3)
             elif occupancy == "1":
-                img_draw.rectangle([(x, y), (w, h)], outline="red")
+                img_draw.rectangle([(x, y), (x+w, y+h)],
+                                   outline=(255, 0, 0), width=3)
             else:
                 raise Exception("wrong occupancy")
     return img
@@ -108,11 +109,8 @@ def hello_world():
 
 @app.route("/img/<camera>/<time>")
 def provide_image(camera, time):
-    # camera = "1"
-    
-    # time = "0709"
     time = get_nearest_time(camera, time)
     img = get_image(camera, time)
     img = draw_bounding_boxes(img, camera, time)
-    img.save('output.jpg')
-    return send_file('output.jpg')
+    img.save('output.png')
+    return send_file('output.png')
