@@ -1,3 +1,4 @@
 flask
 pillow
 flask_cors
+gunicorn
