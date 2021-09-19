@@ -1,9 +1,13 @@
 from flask import Flask, send_file
+from flask_cors import CORS
 import csv
 from PIL import Image, ImageDraw
 from collections import defaultdict
+import base64
+from io import BytesIO
 
 app = Flask(__name__)
+CORS(app)
 
 date_ = "2015-11-12"
 year_ = "2015"
@@ -112,5 +116,7 @@ def provide_image(camera, time):
     time = get_nearest_time(camera, time)
     img = get_image(camera, time)
     img = draw_bounding_boxes(img, camera, time)
-    img.save('output.png')
-    return send_file('output.png')
+    buffered = BytesIO()
+    img.save(buffered, format="JPEG")
+    img_str = base64.b64encode(buffered.getvalue())
+    return img_str
