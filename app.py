@@ -15,7 +15,10 @@ day_ = "12"
 month_ = "11"
 
 relevant_data_ = []
+# cameras are all ints btw
+# camera -> slot -> (x,y,w,h)
 slot_to_loc = defaultdict(dict)
+# camera -> date -> list of times
 camera_date_to_times = defaultdict(lambda: defaultdict(list))
 
 # initialization steps
@@ -86,6 +89,26 @@ def get_image(camera, time):
     img = img.resize(dim)
     return img
 
+def get_num_spaces(camera, time):
+    camera_ = int(camera)
+    hour = time[0:2]
+    minute = time[2:4]
+    datetime_ = f'{date_}_{hour}.{minute}'
+    num_spaces = 0
+    for row in relevant_data_:
+        camera, datetime, day, hour, image_url, minute, month, occupancy, slot_id, weather, year, occupant_changed = row
+        camera = int(camera)
+        slot_id = int(slot_id)
+        if camera == camera_ and datetime == datetime_:
+            x, y, w, h = slot_to_loc[camera][slot_id]
+            if occupancy == "0":
+                num_spaces += 1
+            elif occupancy == "1":
+                pass
+            else:
+                raise Exception("wrong occupancy")
+    return num_spaces
+
 def draw_bounding_boxes(img, camera, time):
     camera_ = int(camera)
     hour = time[0:2]
@@ -110,6 +133,12 @@ def draw_bounding_boxes(img, camera, time):
 @app.route("/")
 def hello_world():
     return "<p>Home page</p>"
+
+@app.route("/num_spaces/<camera>/<time>")
+def provide_num_spaces(camera, time):
+    time = get_nearest_time(camera, time)
+    num_spaces = get_num_spaces(camera, time)
+    return str(num_spaces)
 
 @app.route("/img/<camera>/<time>")
 def provide_image(camera, time):
