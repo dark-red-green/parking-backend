@@ -5,6 +5,15 @@ from PIL import Image, ImageDraw
 from collections import defaultdict
 import base64
 from io import BytesIO
+from math import cos, asin, sqrt, pi
+
+
+def coord_distance(lat1, lon1, lat2, lon2):
+    diameter_of_earth = 7917.5
+    p = pi/180
+    a = 0.5 - cos((lat2-lat1)*p)/2 + cos(lat1*p) * \
+        cos(lat2*p) * (1-cos((lon2-lon1)*p))/2
+    return diameter_of_earth * asin(sqrt(a))
 
 app = Flask(__name__)
 CORS(app)
