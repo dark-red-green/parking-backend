@@ -132,10 +132,10 @@ def draw_bounding_boxes(img, camera, time):
         if camera == camera_ and datetime == datetime_:
             x, y, w, h = slot_to_loc[camera][slot_id]
             if occupancy == "0":
-                img_draw.rectangle([(x, y), (x+w, y+h)], outline=(0,255,0), width=3)
+                img_draw.rectangle([(x, y), (x+w, y+h)], outline=(0,255,0), width=5)
             elif occupancy == "1":
                 img_draw.rectangle([(x, y), (x+w, y+h)],
-                                   outline=(255, 0, 0), width=3)
+                                   outline=(255, 0, 0), width=5)
             else:
                 raise Exception("wrong occupancy")
     return img
@@ -156,7 +156,7 @@ def provide_image(camera, time):
     img = get_image(camera, time)
     img = draw_bounding_boxes(img, camera, time)
     buffered = BytesIO()
-    img.save(buffered, format="JPEG")
+    img.save(buffered, format="PNG")
     img_str = base64.b64encode(buffered.getvalue())
     return img_str
 

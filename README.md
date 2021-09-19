@@ -13,4 +13,5 @@ get_best_parking(lat, long, hours, minutes) -> [{
     distance: float
 },... (sorted from closest distance to least)] 
 
+To get a list of the best parking spots, send a GET request to 'http://localhost:5000/get_best_parking/{lat}/{long}/{hours}/{minutes}. Ex:
 'http://localhost:5000/get_best_parking/40.44438388588774/-79.94336563409755/08/12'
