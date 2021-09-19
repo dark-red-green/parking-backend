@@ -99,6 +99,14 @@ def get_image(camera, time):
     img = img.resize(dim)
     return img
 
+def scale_down_image(img):
+    scale_percent = 30  # percent of original size
+    width = int(img.size[0] * scale_percent / 100)
+    height = int(img.size[1] * scale_percent / 100)
+    dim = (width, height)
+    img = img.resize(dim)
+    return img
+
 def get_num_spaces(camera, time):
     camera_ = int(camera)
     hour = time[0:2]
@@ -156,6 +164,7 @@ def provide_image(camera, time):
     img = get_image(camera, time)
     img = draw_bounding_boxes(img, camera, time)
     buffered = BytesIO()
+    img = scale_down_image(img)
     img.save(buffered, format="PNG")
     img_str = base64.b64encode(buffered.getvalue())
     return img_str
