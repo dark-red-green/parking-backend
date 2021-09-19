@@ -162,6 +162,7 @@ def provide_image(camera, time):
 
 @app.route("/get_best_parking/<lat>/<long>/<hours>/<minutes>")
 def get_best_parking(lat, long, hours, minutes):
+    print("Requested", lat, long)
     time = f'{hours.zfill(2)}{minutes.zfill(2)}'
     
     with open('cameras.json', 'r') as json_file:
