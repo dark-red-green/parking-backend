@@ -5,3 +5,5 @@ dummy2.jpg
 .DS_Store
 __pycache__/
 env
+OVERCAST/
+RAINY/
