@@ -1,6 +1,6 @@
 from flask import Flask, send_file
 import csv
-import cv2
+from PIL import Image, ImageDraw
 from collections import defaultdict
 
 app = Flask(__name__)
@@ -73,13 +73,13 @@ def get_nearest_time(camera, time):
     return f'{hour}{minute}'
 
 def get_image(camera, time):
-    img = cv2.imread(
+    img = Image.open(
         f'CNR-EXT_FULL_IMAGE_1000x750/FULL_IMAGE_1000x750/SUNNY/{date_}/camera{camera}/{date_}_{time}.jpg')
     scale_percent = 259  # percent of original size
-    width = int(img.shape[1] * scale_percent / 100)
-    height = int(img.shape[0] * scale_percent / 100)
+    width = int(img.size[1] * scale_percent / 100)
+    height = int(img.size[0] * scale_percent / 100)
     dim = (width, height)
-    img = cv2.resize(img, dim)
+    img.resize(dim)
     return img
 
 def draw_bounding_boxes(img, camera, time):
@@ -87,6 +87,7 @@ def draw_bounding_boxes(img, camera, time):
     hour = time[0:2]
     minute = time[2:4]
     datetime_ = f'{date_}_{hour}.{minute}'
+    img_draw = ImageDraw.Draw(img)
     for row in relevant_data_:
         camera, datetime, day, hour, image_url, minute, month, occupancy, slot_id, weather, year, occupant_changed = row
         camera = int(camera)
@@ -94,9 +95,9 @@ def draw_bounding_boxes(img, camera, time):
         if camera == camera_ and datetime == datetime_:
             x, y, w, h = slot_to_loc[camera][slot_id]
             if occupancy == "0":
-                cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
+                img_draw.rectangle([(x, y), (w, h)], outline="green")
             elif occupancy == "1":
-                cv2.rectangle(img, (x, y), (x+w, y+h), (0, 0, 255), 2)
+                img_draw.rectangle([(x, y), (w, h)], outline="red")
             else:
                 raise Exception("wrong occupancy")
     return img
@@ -113,5 +114,5 @@ def provide_image(camera, time):
     time = get_nearest_time(camera, time)
     img = get_image(camera, time)
     img = draw_bounding_boxes(img, camera, time)
-    cv2.imwrite('output.jpg', img)
+    img.save('output.jpg')
     return send_file('output.jpg')
