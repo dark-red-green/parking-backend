@@ -6,6 +6,7 @@ from collections import defaultdict
 import base64
 from io import BytesIO
 from math import cos, asin, sqrt, pi
+import json
 
 
 def coord_distance(lat1, lon1, lat2, lon2):
@@ -158,3 +159,21 @@ def provide_image(camera, time):
     img.save(buffered, format="JPEG")
     img_str = base64.b64encode(buffered.getvalue())
     return img_str
+
+@app.route("/get_best_parking/<lat>/<long>/<hours>/<minutes>")
+def get_best_parking(lat, long, hours, minutes):
+    time = f'{hours.zfill(2)}{minutes.zfill(2)}'
+    
+    with open('cameras.json', 'r') as json_file:
+        cameras = json.load(json_file)
+    for camera in cameras:
+        camera["distance"] = coord_distance(
+            float(lat), float(long), float(camera["lat"]), float(camera["long"]))
+        camera_id = int(camera["id"])
+        camera_time = get_nearest_time(camera_id, time)
+        camera["num_spots_available"] = get_num_spaces(camera_id, camera_time)
+    cameras.sort(key= lambda camera: camera["distance"])
+    return json.dumps(cameras)
+
+    
+    
