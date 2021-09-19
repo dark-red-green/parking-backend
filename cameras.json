@@ -1,24 +1,24 @@
 [
     {
-        "id": 1,
+        "id": 2,
         "name": "South of Neville Parking Lot",
         "lat": 40.443441769105114,
         "long": -79.9473914118142
     },
     {
-        "id": 2,
-        "name": "Sennott Square Parking Garage",
+        "id": 4,
+        "name": "Sennott Square Parking Lot",
         "lat": 40.44175302101022,
         "long": -79.95582026515962
     },
     {
-        "id": 3,
+        "id": 7,
         "name": "UPMC Off Campus Parking",
         "lat": 40.45355044309068,
         "long": -79.95294163932046
     },
     {
-        "id": 4,
+        "id": 9,
         "name": "Forbes-Shady Parking Lot",
         "lat": 40.43914539333312,
         "long": -79.91947921668803
